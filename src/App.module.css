@@ -1,0 +1,11 @@
+.container{
+    width: 50%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    border-radius: 10px;
+}
+.inp{
+    width: 100%;
+}
