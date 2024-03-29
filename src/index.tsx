@@ -1,6 +1,7 @@
-import { render } from "react-dom";
+import React from 'react';
+//@ts-ignore
+import { createRoot } from 'react-dom/client';
+import App from './App';
 
-import App from "./App";
-
-const rootElement = document.getElementById("root");
-render(<App />, rootElement);
+const root = createRoot(document.getElementById('root'));
+root.render(<App />);
