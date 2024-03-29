@@ -1,6 +1,6 @@
 import "./styles.css";
 import React, { useState } from "react";
-import { Button, Modal } from 'antd';
+import { Button, Modal } from "antd";
 import {
   BarChart,
   Bar,
@@ -10,50 +10,82 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import styles from './App.module.css'
+import styles from "./App.module.css";
+import InputComponents from "./components/InputComponent/InputComponents";
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [monValue, setMonValue] = useState(100);
+  const [bal, setBal] = useState(1000);
+  const [value, setValue] = useState({
+    mon: 100,
+    tue: 100,
+    wed: 100,
+    thu: 100,
+    fri: 100,
+    sat: 100,
+    sun: 100,
+  });
   const data = [
     {
       name: "mon",
-      pv: monValue,
+      $: value.mon,
       amt: 2400,
     },
     {
       name: "tue",
-      pv: 1398,
+      $: value.tue,
       amt: 2210,
     },
     {
       name: "wed",
-      pv: 9800,
+      $: value.wed,
       amt: 2290,
     },
     {
       name: "thu",
-      pv: 3908,
+      $: value.thu,
       amt: 2000,
     },
     {
       name: "fri",
-      pv: 4800,
+      $: value.fri,
       amt: 2181,
     },
     {
       name: "sat",
-      pv: 3800,
+      $: value.sat,
       amt: 2500,
     },
     {
       name: "sun",
-      pv: 4300,
+      $: value.sun,
       amt: 2100,
     },
   ];
+  const setBalance = (e: any) => {
+    setBal(e.target.value);
+  };
+  const sum: any = Object.values(value).reduce(
+    (acc: any, item: any) => acc + item,
+    0
+  );
+
   const handle = (e: any) => {
-    setMonValue(e.target.value);
+    if (e.target.value < 0) {
+      return;
+    }
+    const objectNow = { ...value, [e.target.name]: Number(e.target.value) };
+
+    const sumNow: any = Object.values(objectNow).reduce(
+      (acc: any, item: any) => acc + item,
+      0
+    );
+
+    if (bal < sumNow) {
+      alert(`Сумма превышена, balance - ${bal} затрат ${sumNow}`);
+      return;
+    }
+    setValue((prev) => ({ ...prev, [e.target.name]: Number(e.target.value) }));
   };
   const showModal = () => {
     setIsModalOpen(true);
@@ -66,38 +98,68 @@ export default function App() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
   return (
-    <div className={styles.container}>
-      <div className={styles.inp}>
-        <input onChange={handle} />
+    <div className={styles.main}>
+      <div className={styles.wrapper}>
+        <div className={styles.left}>
+          <div>My balaance</div>
+          <div className={styles.balance}>${bal}</div>
+        </div>
+        <div className={styles.circle}>
+          <div className={styles.rightTwo}></div>
+          <div className={styles.right}></div>
+        </div>
       </div>
-      <BarChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 20,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        {/* <Legend /> */}
-        <Bar dataKey="pv" stackId="a" fill="#EC755D" />
-      </BarChart>
-      <Modal
-        title="Basic Modal"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>Some contents...</p>
-      </Modal>
-      <button onClick={showModal}>sss</button>
+      <div className={styles.container}>
+        <h1>Spending - Last 7 days </h1>
+        <BarChart
+          className={styles.chart}
+          width={500}
+          height={300}
+          data={data}
+          margin={{
+            top: 20,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          {/* <Legend /> */}
+          <Bar dataKey="$" stackId="a" fill="#EC755D" />
+        </BarChart>
+
+        <Modal
+          title="Add info"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <InputComponents
+            bal={bal}
+            value={value}
+            setBalance={setBalance}
+            handle={handle}
+          />
+        </Modal>
+        <div className={styles.inp}>
+          <div>
+            <div>Total this week</div>
+            <div className={styles.sum}>${sum}</div>
+          </div>
+          <div>
+            <div>Money left</div>
+            <div  className={styles.sum}>${bal - sum}</div>
+          </div>
+        </div>
+      </div>
+      <div className={styles.btnParent}>
+        <button className={styles.btn} onClick={showModal}>Change indicators</button>
+      </div>
     </div>
   );
 }

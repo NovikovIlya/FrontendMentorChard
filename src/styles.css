@@ -6,6 +6,7 @@
 }
 body{
   background-color: #F7E9DC;
+  margin: 0;
 }
 #root{
   display: flex;
